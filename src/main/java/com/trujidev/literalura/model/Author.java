@@ -13,17 +13,17 @@ public class Author {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
-  private int birth_year;
-  private int death_year;
-  @OneToMany(mappedBy = "author")
+  private int birthYear;
+  private int deathYear;
+  @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
   private List<Book> book;
 
   public Author() {}
 
-  public Author(String name, int birth_year, int death_year) {
+  public Author(String name, int birthYear, int deathYear) {
     this.name = name != null ? name : "Autor Desconocido";
-    this.birth_year = Optional.ofNullable(birth_year).orElse(0);
-    this.death_year = Optional.ofNullable(death_year).orElse(0);
+    this.birthYear = Optional.ofNullable(birthYear).orElse(0);
+    this.deathYear = Optional.ofNullable(deathYear).orElse(0);
   }
 
   public String getName() {
@@ -34,27 +34,27 @@ public class Author {
     this.name = name;
   }
 
-  public int getBirth_year() {
-    return birth_year;
+  public int getBirthYear() {
+    return birthYear;
   }
 
-  public void setBirth_year(int birth_year) {
-    this.birth_year = birth_year;
+  public void setBirthYear(int birthYear) {
+    this.birthYear = birthYear;
   }
 
-  public int getDeath_year() {
-    return death_year;
+  public int getDeathYear() {
+    return deathYear;
   }
 
-  public void setDeath_year(int death_year) {
-    this.death_year = death_year;
+  public void setDeathYear(int deathYear) {
+    this.deathYear = deathYear;
   }
 
   @Override
   public String toString() {
     return "{" +
-        "death_year=" + death_year +
-        ", birth_year=" + birth_year +
+        "deathYear=" + deathYear +
+        ", birthYear=" + birthYear +
         ", name='" + name + '\'' +
         '}';
   }
@@ -64,11 +64,11 @@ public class Author {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Author author = (Author) o;
-    return birth_year == author.birth_year && death_year == author.death_year && Objects.equals(id, author.id) && Objects.equals(name, author.name);
+    return birthYear == author.birthYear && deathYear == author.deathYear && Objects.equals(id, author.id) && Objects.equals(name, author.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, birth_year, death_year);
+    return Objects.hash(id, name, birthYear, deathYear);
   }
 }
