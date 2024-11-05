@@ -2,7 +2,6 @@ package com.trujidev.literalura.model;
 
 import jakarta.persistence.*;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -15,7 +14,7 @@ public class Book {
   @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinColumn(name = "author_id")
   private Author author;
-  private String[] language;
+  private String language;
   private int download_count;
 
   public Book() {}
@@ -23,7 +22,7 @@ public class Book {
   public Book(BookData bookData, Author author) {
     this.title = bookData.title();
     this.author = author;
-    this.language = bookData.language();
+    this.language = bookData.language() != null && bookData.language().length > 0 ? bookData.language()[0] : null;
     this.download_count = bookData.download_count();
   }
 
@@ -51,11 +50,11 @@ public class Book {
     this.author = author;
   }
 
-  public String[] getLanguage() {
+  public String getLanguage() {
     return language;
   }
 
-  public void setLanguage(String[] language) {
+  public void setLanguage(String language) {
     this.language = language;
   }
 
@@ -70,7 +69,7 @@ public class Book {
   @Override
   public String toString() {
     return "Book{" +
-        "language=" + Arrays.toString(language) +
+        "language=" + language +
         ", download_count=" + download_count +
         ", author=" + author +
         ", title='" + title + '\'' +
@@ -87,6 +86,6 @@ public class Book {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, author, Arrays.hashCode(language), download_count);
+    return Objects.hash(id, title, author, language, download_count);
   }
 }
