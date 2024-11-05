@@ -1,6 +1,7 @@
 package com.trujidev.literalura;
 
 import com.trujidev.literalura.presentation.Menu;
+import com.trujidev.literalura.repository.AuthorRepository;
 import com.trujidev.literalura.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,13 +13,15 @@ public class LiterAluraApplication implements CommandLineRunner {
 
 	@Autowired
 	private BookRepository repository;
+	@Autowired
+	private AuthorRepository authorRepository;
 	public static void main(String[] args) {
 		SpringApplication.run(LiterAluraApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		Menu menu = new Menu(repository);
+		Menu menu = new Menu(repository, authorRepository);
 		menu.showMenu();
 	}
 }
