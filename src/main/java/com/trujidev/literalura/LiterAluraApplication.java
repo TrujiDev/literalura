@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class LiterAluraApplication implements CommandLineRunner {
 
 	@Autowired
-	private BookRepository repository;
+	private BookRepository bookRepository;
 	@Autowired
 	private AuthorRepository authorRepository;
 	public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class LiterAluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Menu menu = new Menu(repository, authorRepository);
+		Menu menu = new Menu(bookRepository, authorRepository);
 		menu.showMenu();
 	}
 }
