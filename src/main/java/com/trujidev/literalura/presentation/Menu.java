@@ -19,11 +19,10 @@ public class Menu {
   ApiClient apiClient = new ApiClient();
 
   private final AuthorRepository authorRepository;
-  private final BookRepository repository;
-  private final String url = "https://gutendex.com/books";
+  private final BookRepository bookRepository;
 
-  public Menu(BookRepository repository, AuthorRepository authorRepository) {
-    this.repository = repository;
+  public Menu(BookRepository bookRepository, AuthorRepository authorRepository) {
+    this.bookRepository = bookRepository;
     this.authorRepository = authorRepository;
   }
 
@@ -38,6 +37,7 @@ public class Menu {
           3 - Historial de búsqueda
           4 - Historial de autores
           5 - Historial de autores vivos
+          6 - Cantidad de libros por idioma
           
           0 - Salir
           
@@ -62,16 +62,21 @@ public class Menu {
         case 5:
           livingAuthors();
           break;
+        case 6:
+          bookCountByLanguage();
+          break;
         case 0:
           System.out.println("Cerrando...");
           break;
         default:
           System.out.println("Opción inválida");
+          showMenu();
       }
     }
   }
 
   private Optional<BookData> fetchBookData(String title) {
+    String url = "https://gutendex.com/books";
     var json = apiClient.fetchData(url + "/?search=" + title);
     ResultData resultData = jsonParser.fromJson(json, ResultData.class);
     return resultData.results().stream().findFirst();
@@ -93,7 +98,7 @@ public class Menu {
 
       Book book = new Book(data, author);
       System.out.println(book);
-      repository.save(book);
+      bookRepository.save(book);
     } else {
       System.out.println("No se encontraron resultados para el título: " + title);
     }
@@ -103,7 +108,7 @@ public class Menu {
     System.out.print("Escribe el código del idioma en el que quieres ver los libros: ");
     var languageCode = sc.nextLine().toLowerCase().trim();
 
-    List<Book> books = repository.findByLanguage(languageCode);
+    List<Book> books = bookRepository.findByLanguage(languageCode);
 
     for (Book book : books) {
       System.out.println(
@@ -120,7 +125,7 @@ public class Menu {
   }
 
   public void searchHistory() {
-    List<Book> books = repository.findAll();
+    List<Book> books = bookRepository.findAll();
 
     if (books.isEmpty()) {
       System.out.print("No hay libros en la base de datos.");
@@ -162,7 +167,12 @@ public class Menu {
     int year = sc.nextInt();
     sc.nextLine();
 
-    List<Author> authors = authorRepository.findByBirthYearLessThanEqualAndDeathYearGreaterThanEqual(year, year);
+    if (year < 0) {
+      System.out.println("El año no puede ser negativo. Inténtalo de nuevo.");
+      return;
+    }
+
+    List<Author> authors = authorRepository.findByBirthYearLessThanEqualAndDeathYearGreaterThanEqualOrDeathYearIsNull(year, year);
 
     if (authors.isEmpty()) {
       System.out.println("No hay autores vivos en el año " + year);
@@ -172,10 +182,39 @@ public class Menu {
     System.out.println("Listado de Autores Vivos en " + year + ":");
     System.out.println("-------------------------------------------");
     for (Author author : authors) {
-      System.out.printf("Nombre: %s\nAño de Nacimiento: %d\nAño de Fallecimiento: %d\n",
-          author.getName(), author.getBirthYear(), author.getDeathYear());
+      System.out.printf("Nombre: %s\nAño de Nacimiento: %d\nAño de Fallecimiento: %s\n",
+          author.getName(), author.getBirthYear(), author.getDeathYear() != -1 ? author.getDeathYear() : "Aún vivo");
       System.out.println("-------------------------------------------");
     }
   }
 
+
+  public void bookCountByLanguage() {
+    List<String> languages = bookRepository.findDistinctLanguages();
+
+    if (languages.isEmpty()) {
+      System.out.println("No hay libros en la base de datos.");
+      return;
+    }
+
+    System.out.println("Idiomas disponibles:");
+    for (int i = 0; i < languages.size(); i++) {
+      System.out.println((i + 1) + " - " + languages.get(i));
+    }
+
+    System.out.print("Selecciona el número del idioma para ver la cantidad de libros: ");
+    int languageOption = sc.nextInt();
+    sc.nextLine();
+
+    if (languageOption < 1 || languageOption > languages.size()) {
+      System.out.println("Opción inválida.");
+      return;
+    }
+
+    String selectedLanguage = languages.get(languageOption - 1);
+
+    long count = bookRepository.countByLanguage(selectedLanguage);
+
+    System.out.println("Número total de libros en el idioma '" + selectedLanguage.toUpperCase() + "': " + count);
+  }
 }
