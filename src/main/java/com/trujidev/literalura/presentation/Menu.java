@@ -30,50 +30,85 @@ public class Menu {
     var option = -1;
     while (option != 0) {
       var menu = """
-          
-          *** Menu ***
-          1 - Buscar por título
-          2 - Historial de búsqueda por idioma
-          3 - Historial de búsqueda
-          4 - Historial de autores
-          5 - Historial de autores vivos
-          6 - Cantidad de libros por idioma
-          
-          0 - Salir
-          
-          ¿Qué quieres hacer?:\s""";
+        *** Menú Principal ***
+        -----------------------
+        [Búsqueda]
+        [1] Buscar libros por título
+        
+        [Historial]
+        [2] Ver historial de búsquedas por idioma
+        [3] Ver historial completo de búsquedas
+        [4] Ver historial de autores registrados
+        [5] Ver historial de autores vivos en un año específico
+        
+        [Estadísticas]
+        [6] Ver la cantidad de libros por idioma
+  
+        [0] Salir del programa
+        ------------------------
+        Por favor, selecciona una opción (0-6):
+        """;
       System.out.println(menu);
-      option = sc.nextInt();
-      sc.nextLine();
+
+      option = getUserOption();
 
       switch (option) {
         case 1:
+          System.out.println("Buscando libros por título...");
           searchByTitle();
           break;
         case 2:
+          System.out.println("Consultando historial de búsqueda por idioma...");
           searchHistoryByLanguage();
           break;
         case 3:
+          System.out.println("Consultando historial de búsqueda...");
           searchHistory();
           break;
         case 4:
+          System.out.println("Consultando historial de autores...");
           authorsHistory();
           break;
         case 5:
+          System.out.println("Consultando historial de autores vivos...");
           livingAuthors();
           break;
         case 6:
+          System.out.println("Consultando cantidad de libros por idioma...");
           bookCountByLanguage();
           break;
         case 0:
-          System.out.println("Cerrando...");
-          break;
+          System.out.print("¿Estás seguro de que quieres salir? (sí/no): ");
+          String confirm = sc.nextLine().toLowerCase();
+          if (confirm.equals("sí") || confirm.equals("si")) {
+            System.out.println("Cerrando...");
+            break;
+          } else {
+            continue;
+          }
         default:
-          System.out.println("Opción inválida");
-          showMenu();
+          System.out.println("Opción inválida. Por favor, ingresa un número entre 0 y 6.");
       }
     }
   }
+
+  private int getUserOption() {
+    int option = -1;
+    while (option < 0 || option > 6) {
+      if (sc.hasNextInt()) {
+        option = sc.nextInt();
+        sc.nextLine();
+        if (option < 0 || option > 6) {
+          System.out.println("Opción fuera de rango. Por favor, elige entre 0 y 6.");
+        }
+      } else {
+        System.out.println("Entrada no válida. Por favor, ingresa un número.");
+        sc.nextLine();
+      }
+    }
+    return option;
+  }
+
 
   private Optional<BookData> fetchBookData(String title) {
     String url = "https://gutendex.com/books";
