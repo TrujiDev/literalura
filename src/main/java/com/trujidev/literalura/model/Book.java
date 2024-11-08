@@ -15,7 +15,7 @@ public class Book {
   @JoinColumn(name = "author_id")
   private Author author;
   private String language;
-  private int download_count;
+  private int downloadCount;
 
   public Book() {}
 
@@ -23,7 +23,7 @@ public class Book {
     this.title = bookData.title();
     this.author = author;
     this.language = bookData.language() != null && bookData.language().length > 0 ? bookData.language()[0] : null;
-    this.download_count = bookData.download_count();
+    this.downloadCount = bookData.download_count();
   }
 
   public Long getId() {
@@ -58,19 +58,19 @@ public class Book {
     this.language = language;
   }
 
-  public int getDownload_count() {
-    return download_count;
+  public int getDownloadCount() {
+    return downloadCount;
   }
 
-  public void setDownload_count(int download_count) {
-    this.download_count = download_count;
+  public void setDownloadCount(int downloadCount) {
+    this.downloadCount = downloadCount;
   }
 
   @Override
   public String toString() {
     return "Book{" +
         "language=" + language +
-        ", download_count=" + download_count +
+        ", downloadCount=" + downloadCount +
         ", author=" + author +
         ", title='" + title + '\'' +
         '}';
@@ -81,11 +81,11 @@ public class Book {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Book book = (Book) o;
-    return download_count == book.download_count && Objects.equals(id, book.id) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.deepEquals(language, book.language);
+    return downloadCount == book.downloadCount && Objects.equals(id, book.id) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.deepEquals(language, book.language);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, author, language, download_count);
+    return Objects.hash(id, title, author, language, downloadCount);
   }
 }
